@@ -1,0 +1,34 @@
+/*************PWM****************/
+/*1.相关IO初始化*/
+  GPIO_InitTypeDef GPIO_Initure;
+  __HAL_RCC_TIM14_CLK_ENABLE();			//使能定时器14
+  __HAL_RCC_GPIOF_CLK_ENABLE();			//开启GPIOF时钟
+  GPIO_Initure.Pin=GPIO_PIN_9;           	//PF9
+  GPIO_Initure.Mode=GPIO_MODE_AF_PP;  	//复用推挽输出
+	GPIO_Initure.Pull=GPIO_PULLUP;          //上拉
+  GPIO_Initure.Speed=GPIO_SPEED_HIGH;     //高速
+  GPIO_Initure.Alternate= GPIO_AF9_TIM14;	//PF9复用为TIM14_CH1
+  HAL_GPIO_Init(GPIOF,&GPIO_Initure);
+/*2.定时器初始化*/
+  TIM_HandleTypeDef TIM14_Handler;      	//定时器14句柄 
+  TIM14_Handler.Instance=TIM14;          	//定时器14
+  TIM14_Handler.Init.Prescaler=psc;       //定时器分频
+  TIM14_Handler.Init.CounterMode=TIM_COUNTERMODE_UP;//向上计数模式
+  TIM14_Handler.Init.Period=arr;          //自动重装载值
+  TIM14_Handler.Init.ClockDivision=TIM_CLOCKDIVISION_DIV1;
+  HAL_TIM_PWM_Init(&TIM14_Handler);       //初始化为PWM
+/*3.通道功能初始化*/
+  TIM_OC_InitTypeDef TIM14_CH1Handler;	  //定时器14通道1句柄
+  TIM14_CH1Handler.OCMode=TIM_OCMODE_PWM1; //模式选择PWM1
+  TIM14_CH1Handler.Pulse=arr/2;            //设置比较值,此值用来确定占空比，默认比较值为自动重装载值的一半,即占空比为50%
+  TIM14_CH1Handler.OCPolarity=TIM_OCPOLARITY_LOW;
+  HAL_TIM_PWM_ConfigChannel(&TIM14_Handler,&TIM14_CH1Handler,TIM_CHANNEL_1);//配置TIM14通道1
+  HAL_TIM_PWM_Start(&TIM14_Handler,TIM_CHANNEL_1);//开启PWM通道1 生成波形
+
+/*PWM模式1  TIMx_CNT<TIMx_CCR1时通道1为有效电平，否则为无效电平*/
+/*PWM模式2  TIMx_CNT<TIMx_CCR1时通道1为无效电平，否则为有效电平*/
+/*输出比较极性为低 反向输出*/
+/*输出比较极性为高 正向输出*/
+
+
+
