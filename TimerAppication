@@ -130,6 +130,22 @@ u32 TIM5CH1_CAPTURE_VAL;	//输入捕获值(TIM2/TIM5是32位)
 
 
 
+/*main.c*/
+delay_ms(10);
+/*制造一个占空比变化的PWM波形*/
+TIM_SetTIM14Compare1(TIM_GetTIM14Capture1()+1); 
+if(TIM_GetTIM14Capture1()==300)TIM_SetTIM14Compare1(0);        
+if(TIM5CH1_CAPTURE_STA&0X80)        //成功捕获到了一次高电平脉宽
+{
+	temp=TIM5CH1_CAPTURE_STA&0X3F; 
+	temp*=0XFFFFFFFF;		 	    //溢出时间总和
+	temp+=TIM5CH1_CAPTURE_VAL;      //得到总的高电平时间
+	printf("HIGH:%lld us\r\n",temp);//打印总的高点平时间
+	TIM5CH1_CAPTURE_STA=0;          //开启下一次捕获
+}
+    
+
+
 
 
 
