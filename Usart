@@ -48,6 +48,22 @@ void uart_init(u32 bound)
 
 
 /*3.重写回调函数*/
+#define USART_REC_LEN
+#define RXBUFFERSIZE
+struct UsartInfo 
+{
+	uint8_t   UsartRxBuf[USART_REC_LEN];
+	
+	//bit15，	接收完成标志
+	//bit14，	接收到0x0d
+	//bit13~0，	接收到的有效字节数目
+	uint16_t  UsartRxStatus = 0;
+	
+	uint8_t   aRxBuffer[RXBUFFERSIZE]
+}
+
+struct UsartInfo _Usart1;
+
 void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart)
 {
 	if(huart->Instance==USART1)//如果是串口1
